@@ -50,6 +50,29 @@
             cursor: not-allowed;
             transform: none;
         }
+
+        .portfolio-card {
+            transition: all 0.3s ease;
+        }
+
+        .portfolio-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+        }
+
+        .portfolio-img {
+            background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+        }
+
+        .show-more-btn {
+            background: linear-gradient(135deg, #1e40af 0%, #0ea5e9 100%);
+            transition: all 0.3s ease;
+        }
+
+        .show-more-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 15px -3px rgba(14, 165, 233, 0.3);
+        }
     </style>
 
     <script>
@@ -195,8 +218,30 @@
         </div>
     </section>
 
-    <!-- FAQ Section -->
+    <!-- Portfolio Section -->
     <section class="py-16 px-4 bg-white">
+        <div class="max-w-7xl mx-auto">
+            <h2 class="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-4">
+                수료생 포트폴리오
+            </h2>
+            <p class="text-center text-gray-600 mb-12 text-lg">
+                실전 프로젝트를 통해 검증된 AI 마케팅 전문가들
+            </p>
+
+            <div id="portfolioGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- 포트폴리오 카드들은 JavaScript로 동적 생성됩니다 -->
+            </div>
+
+            <div class="text-center mt-12">
+                <button id="showMoreBtn" class="show-more-btn text-white font-semibold py-3 px-8 rounded-xl shadow-lg">
+                    더 많은 포트폴리오 보기
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="py-16 px-4 bg-gray-50">
         <div class="max-w-4xl mx-auto">
             <h2 class="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-4">
                 자주 묻는 질문
@@ -400,6 +445,250 @@
 
     <!-- JavaScript -->
     <script>
+        // 수료생 포트폴리오 데이터
+        const portfolioData = [
+            {
+                name: "김민준",
+                project: "AI 기반 뷰티 브랜드 SNS 마케팅",
+                description: "Gemini를 활용한 인스타그램/틱톡 콘텐츠 제작으로 3개월간 팔로워 300% 증가, 구매 전환율 45% 향상",
+                skills: ["Gemini", "SNS 마케팅", "데이터 분석"]
+            },
+            {
+                name: "이서연",
+                project: "스타트업 구독 서비스 캠페인 최적화",
+                description: "LLM 기반 광고 문구 A/B 테스트 자동화로 CTR 120% 개선, 고객 획득 비용 35% 절감",
+                skills: ["ChatGPT", "광고 최적화", "Python 자동화"]
+            },
+            {
+                name: "박지훈",
+                project: "로컬 카페 체인 브랜딩 캠페인",
+                description: "DALL-E 활용 시각 콘텐츠 제작 및 지역 타겟팅 전략으로 매장 방문객 200% 증가",
+                skills: ["DALL-E", "브랜딩", "로컬 SEO"]
+            },
+            {
+                name: "최수진",
+                project: "패션 커머스 개인화 이메일 마케팅",
+                description: "AI 기반 고객 세그먼트 분석 및 자동화 이메일로 재구매율 85% 향상",
+                skills: ["고객 분석", "이메일 자동화", "Zapier"]
+            },
+            {
+                name: "정다은",
+                project: "교육 플랫폼 콘텐츠 마케팅",
+                description: "생성형 AI로 블로그/유튜브 스크립트 제작, 월 100만 조회수 달성 및 유입 300% 증가",
+                skills: ["콘텐츠 제작", "SEO", "YouTube 마케팅"]
+            },
+            {
+                name: "강현우",
+                project: "B2B SaaS 리드 제너레이션",
+                description: "ChatGPT 활용 링크드인 캠페인으로 질 높은 리드 150건 확보, 계약 전환율 28%",
+                skills: ["B2B 마케팅", "LinkedIn", "리드 관리"]
+            },
+            {
+                name: "윤지아",
+                project: "헬스케어 앱 사용자 리텐션 개선",
+                description: "AI 기반 푸시 알림 개인화 전략으로 30일 리텐션 65% 달성",
+                skills: ["앱 마케팅", "리텐션 분석", "Mixpanel"]
+            },
+            {
+                name: "임태양",
+                project: "반려동물 용품 쇼핑몰 매출 증대",
+                description: "AI 챗봇 고객 상담 및 맞춤 상품 추천으로 객단가 40% 증가, CS 응대 시간 70% 단축",
+                skills: ["챗봇 구축", "커머스", "고객 경험"]
+            },
+            {
+                name: "한예린",
+                project: "친환경 브랜드 스토리텔링",
+                description: "Midjourney + ChatGPT 조합으로 브랜드 스토리 영상 제작, 바이럴 조회수 500만 돌파",
+                skills: ["Midjourney", "스토리텔링", "영상 기획"]
+            },
+            {
+                name: "오준혁",
+                project: "부동산 중개 플랫폼 SEO",
+                description: "AI 기반 지역별 롱테일 키워드 전략으로 오가닉 트래픽 400% 증가",
+                skills: ["SEO", "키워드 리서치", "Google Analytics"]
+            },
+            {
+                name: "신하늘",
+                project: "게임 커뮤니티 인플루언서 협업",
+                description: "생성형 AI로 인플루언서 매칭 및 협업 콘텐츠 기획, 다운로드 수 10만+ 달성",
+                skills: ["인플루언서 마케팅", "커뮤니티 관리", "협업 기획"]
+            },
+            {
+                name: "배소율",
+                project: "여행 스타트업 계절 캠페인",
+                description: "AI 예측 모델로 성수기 타겟팅 및 동적 가격 전략 수립, ROI 250% 달성",
+                skills: ["예측 분석", "캠페인 기획", "ROI 최적화"]
+            },
+            {
+                name: "노지훈",
+                project: "금융 서비스 신뢰도 향상 캠페인",
+                description: "LLM 기반 고객 리뷰 분석 및 맞춤형 FAQ 자동 생성으로 고객 만족도 92% 달성",
+                skills: ["텍스트 분석", "고객 인사이트", "FAQ 자동화"]
+            },
+            {
+                name: "서민지",
+                project: "웨딩 플래너 브랜드 런칭",
+                description: "AI 생성 이미지 및 카피로 IG 광고 제작, 문의 전환율 60% 기록",
+                skills: ["광고 크리에이티브", "Instagram Ads", "전환 최적화"]
+            },
+            {
+                name: "권도윤",
+                project: "식품 배달 앱 프로모션",
+                description: "ChatGPT 프롬프트 엔지니어링으로 쿠폰 사용률 75% 향상",
+                skills: ["프로모션 기획", "프롬프트 엔지니어링", "사용자 행동 분석"]
+            },
+            {
+                name: "홍수아",
+                project: "유아 교육 브랜드 바이럴 캠페인",
+                description: "AI 생성 육아 팁 콘텐츠로 네이버 블로그 상위 노출 및 월 방문자 50만 달성",
+                skills: ["바이럴 마케팅", "네이버 블로그", "맘카페 마케팅"]
+            },
+            {
+                name: "조은채",
+                project: "IT 기업 채용 브랜딩",
+                description: "생성형 AI로 채용 공고 및 기업 문화 콘텐츠 제작, 지원자 수 3배 증가",
+                skills: ["채용 마케팅", "브랜딩", "콘텐츠 전략"]
+            },
+            {
+                name: "안재훈",
+                project: "스포츠 용품 리타겟팅 캠페인",
+                description: "AI 분석 기반 장바구니 이탈 고객 타겟팅으로 재방문율 55% 향상",
+                skills: ["리타겟팅", "Facebook Ads", "전환 추적"]
+            },
+            {
+                name: "유나영",
+                project: "온라인 강의 플랫폼 성장",
+                description: "AI 챗GPT 활용 랜딩페이지 카피 최적화로 가입률 90% 증가",
+                skills: ["랜딩페이지 최적화", "CRO", "A/B 테스트"]
+            },
+            {
+                name: "송민석",
+                project: "자동차 딜러 로컬 마케팅",
+                description: "AI 기반 지역 광고 타겟팅 및 예약 자동화로 시승 예약 200건 확보",
+                skills: ["로컬 광고", "자동화", "Google My Business"]
+            },
+            {
+                name: "문지우",
+                project: "화장품 브랜드 글로벌 진출",
+                description: "다국어 AI 번역 및 현지화 콘텐츠로 해외 매출 150% 증가",
+                skills: ["글로벌 마케팅", "현지화", "크로스보더"]
+            },
+            {
+                name: "황서준",
+                project: "가구 인테리어 쇼룸 홍보",
+                description: "AI 생성 3D 렌더링 이미지로 온라인 예약 300% 증가",
+                skills: ["3D 비주얼", "AR/VR", "옴니채널"]
+            },
+            {
+                name: "장하은",
+                project: "음악 스트리밍 신인 아티스트 프로모션",
+                description: "생성형 AI 앨범 커버 + 소셜 캠페인으로 스트리밍 100만 돌파",
+                skills: ["음악 마케팅", "소셜 캠페인", "크리에이티브 디자인"]
+            },
+            {
+                name: "전시우",
+                project: "구독 박스 서비스 고객 유지",
+                description: "AI 기반 고객 이탈 예측 모델 구축 및 맞춤 리텐션 캠페인으로 해지율 40% 감소",
+                skills: ["머신러닝", "고객 이탈 방지", "구독 모델"]
+            },
+            {
+                name: "곽예진",
+                project: "농산물 직거래 플랫폼",
+                description: "AI 챗봇 상담 및 레시피 추천으로 재구매율 70% 달성",
+                skills: ["챗봇", "추천 시스템", "농업 마케팅"]
+            },
+            {
+                name: "남태민",
+                project: "웨어러블 디바이스 런칭",
+                description: "AI 기반 제품 리뷰 분석 및 인플루언서 협업으로 크라우드펀딩 목표액 300% 달성",
+                skills: ["제품 런칭", "크라우드펀딩", "리뷰 분석"]
+            },
+            {
+                name: "복지원",
+                project: "프랜차이즈 브랜드 확장",
+                description: "지역별 AI 수요 예측 및 맞춤 캠페인으로 신규 가맹점 50개 오픈",
+                skills: ["프랜차이즈 마케팅", "수요 예측", "지역 전략"]
+            },
+            {
+                name: "탁수빈",
+                project: "메타버스 패션쇼 프로모션",
+                description: "생성형 AI로 가상 패션쇼 기획 및 NFT 연계 마케팅으로 티켓 완판",
+                skills: ["메타버스", "NFT", "이벤트 마케팅"]
+            },
+            {
+                name: "마준서",
+                project: "중고차 플랫폼 신뢰 구축",
+                description: "AI 차량 검수 리포트 자동 생성 및 투명성 마케팅으로 거래량 180% 증가",
+                skills: ["신뢰 마케팅", "자동 리포트", "플랫폼 성장"]
+            },
+            {
+                name: "석하린",
+                project: "반려동물 헬스케어 앱 성장",
+                description: "AI 건강 분석 콘텐츠 및 커뮤니티 활성화로 MAU 10만 돌파",
+                skills: ["헬스케어", "커뮤니티", "MAU 성장"]
+            }
+        ];
+
+        let currentDisplayCount = 9;
+
+        function createPortfolioCard(person) {
+            const skillBadges = person.skills.map(skill =>
+                `<span class="text-xs font-medium px-3 py-1 bg-blue-100 text-blue-700 rounded-full">${skill}</span>`
+            ).join('');
+
+            return `
+                <div class="portfolio-card bg-white rounded-2xl shadow-lg overflow-hidden">
+                    <div class="portfolio-img h-48 flex items-center justify-center">
+                        <div class="text-white text-center">
+                            <div class="w-24 h-24 mx-auto bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center mb-3">
+                                <svg class="w-12 h-12" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold">${person.name}</h3>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h4 class="text-lg font-bold text-gray-900 mb-2">${person.project}</h4>
+                        <p class="text-gray-600 text-sm leading-relaxed mb-4">${person.description}</p>
+                        <div class="flex flex-wrap gap-2">
+                            ${skillBadges}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderPortfolios() {
+            const grid = document.getElementById('portfolioGrid');
+            const displayData = portfolioData.slice(0, currentDisplayCount);
+            grid.innerHTML = displayData.map(person => createPortfolioCard(person)).join('');
+
+            const showMoreBtn = document.getElementById('showMoreBtn');
+            if (currentDisplayCount >= portfolioData.length) {
+                showMoreBtn.style.display = 'none';
+            } else {
+                showMoreBtn.style.display = 'inline-block';
+            }
+        }
+
+        document.getElementById('showMoreBtn').addEventListener('click', function() {
+            currentDisplayCount += 9;
+            renderPortfolios();
+
+            // 새로 로드된 카드로 부드럽게 스크롤
+            setTimeout(() => {
+                const cards = document.querySelectorAll('.portfolio-card');
+                if (cards.length > 9) {
+                    cards[currentDisplayCount - 9].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 100);
+        });
+
+        // 초기 렌더링
+        renderPortfolios();
+
+        // 신청서 폼 처리
         document.getElementById('applicationForm').addEventListener('submit', async function(e) {
             e.preventDefault();
 
