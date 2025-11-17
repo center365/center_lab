@@ -92,17 +92,9 @@
     </style>
 
     <script>
-        // Google Form 설정 - 실제 사용 시 아래 값들을 Google Form의 실제 ID로 교체하세요
-        const GOOGLE_FORM_ID = 'YOUR_FORM_ID_HERE';
-        const FIELD_MAPPING = {
-            companyName: 'entry.123456789',      // 회사명
-            contactName: 'entry.234567890',      // 담당자 성함
-            phone: 'entry.345678901',            // 연락처
-            email: 'entry.456789012',            // 이메일
-            industry: 'entry.567890123',         // 업종
-            internCount: 'entry.678901234',      // 희망 인턴 수
-            conversion: 'entry.789012345'        // 정규직 전환 체크박스
-        };
+        // Google Apps Script 웹 앱 URL 설정
+        // 아래 URL을 실제 배포한 Google Apps Script 웹 앱 URL로 교체하세요
+        const GOOGLE_SCRIPT_URL = 'YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL_HERE';
     </script>
 </head>
 <body class="bg-gray-50">
@@ -547,37 +539,27 @@
                     email: formData.get('email'),
                     industry: formData.get('industry'),
                     internCount: formData.get('internCount'),
-                    conversion: formData.get('conversion') ? '예' : '아니오'
+                    conversion: formData.get('conversion') ? '예' : '아니오',
+                    timestamp: new Date().toLocaleString('ko-KR', { timeZone: 'Asia/Seoul' })
                 };
 
-                // Create Google Form URL with parameters
-                const formUrl = `https://docs.google.com/forms/d/e/${GOOGLE_FORM_ID}/formResponse`;
-                const params = new URLSearchParams();
-                params.append(FIELD_MAPPING.companyName, data.companyName);
-                params.append(FIELD_MAPPING.contactName, data.contactName);
-                params.append(FIELD_MAPPING.phone, data.phone);
-                params.append(FIELD_MAPPING.email, data.email);
-                params.append(FIELD_MAPPING.industry, data.industry);
-                params.append(FIELD_MAPPING.internCount, data.internCount);
-                params.append(FIELD_MAPPING.conversion, data.conversion);
-
-                // Submit to Google Form
-                // Note: Using fetch with no-cors mode for Google Forms
-                await fetch(formUrl, {
+                // Submit to Google Apps Script
+                const response = await fetch(GOOGLE_SCRIPT_URL, {
                     method: 'POST',
-                    body: params,
-                    mode: 'no-cors'
+                    mode: 'no-cors',
+                    cache: 'no-cache',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
                 });
 
                 // Show success modal
-                // Note: Google Forms with no-cors always appears successful
-                // For production, consider using Google Apps Script as a proxy
-                setTimeout(() => {
-                    submitBtn.disabled = false;
-                    submitText.textContent = '신청서 제출하기';
-                    loadingSpinner.classList.add('hidden');
-                    showModal('successModal');
-                }, 1000);
+                // Note: no-cors mode doesn't allow reading response, but submission should work
+                submitBtn.disabled = false;
+                submitText.textContent = '신청서 제출하기';
+                loadingSpinner.classList.add('hidden');
+                showModal('successModal');
 
             } catch (error) {
                 console.error('Form submission error:', error);
